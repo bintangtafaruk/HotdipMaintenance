@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hot Dip Maintenance</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f3f6fa;--card:#fff;--text:#1c2a39;--mute:#64748b;--line:#e2e8f0;--pri:#1d4ed8;--pri2:#0ea5e9;--head:#0f2742;
+--ok:#16a34a;--okbg:#dcfce7;--ng:#dc2626;--ngbg:#fee2e2;--warn:#fef3c7;--hover:#f1f5f9}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1220;--card:#131c2e;--text:#e5ecf6;--mute:#93a4ba;--line:#243049;--pri:#60a5fa;--head:#0a1526;--okbg:#14391f;--ngbg:#43191b;--warn:#43360f;--hover:#1a2740}}
+:root[data-theme="dark"]{--bg:#0b1220;--card:#131c2e;--text:#e5ecf6;--mute:#93a4ba;--line:#243049;--pri:#60a5fa;--head:#0a1526;--okbg:#14391f;--ngbg:#43191b;--warn:#43360f;--hover:#1a2740}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 "Segoe UI",system-ui,Arial,sans-serif}
+.app{max-width:1400px;margin:auto;padding:16px}
+header{background:linear-gradient(120deg,#0f2742,#1d4ed8 60%,#0ea5e9);color:#fff;border-radius:16px;padding:22px 26px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+header h1{margin:0;font-size:24px;letter-spacing:.3px}header p{margin:4px 0 0;opacity:.85;font-size:13px}
+.tabs{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;margin:16px 0;gap:4px}
+.tab{border:0;background:none;color:var(--mute);padding:9px 18px;border-radius:9px;font-weight:600;cursor:pointer;font-size:14px}
+.tab.active{background:var(--pri);color:#fff}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+.bar{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.f{display:flex;flex-direction:column;gap:4px}.f label{font-size:11px;font-weight:700;color:var(--mute);letter-spacing:.5px}
+input,select,textarea{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);outline-offset:-1px}
+.btn{border:0;border-radius:9px;padding:9px 14px;font-weight:600;cursor:pointer;font-size:13px;background:var(--hover);color:var(--text);border:1px solid var(--line)}
+.btn.p{background:var(--pri);color:#fff;border-color:var(--pri)}.btn.d{background:var(--ngbg);color:var(--ng);border-color:transparent}
+.sp{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;border-left:5px solid var(--pri)}
+.kpi small{color:var(--mute);font-weight:600}.kpi b{display:block;font-size:26px;margin-top:2px}
+.kpi.ok{border-left-color:var(--ok)}.kpi.ng{border-left-color:var(--ng)}
+.prog{height:6px;background:var(--line);border-radius:9px;margin-top:6px;overflow:hidden}.prog i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
+.wrap{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:auto;max-height:70vh}
+table{border-collapse:separate;border-spacing:0;width:100%}
+th{background:var(--head);color:#fff;font-size:12px;padding:9px 4px;position:sticky;top:0;z-index:3}
+td{border-bottom:1px solid var(--line);padding:4px;text-align:center}
+.c1,.c2{position:sticky;background:var(--card);z-index:2}.c1{left:0;width:42px;min-width:42px}.c2{left:42px;min-width:290px;text-align:left;padding:8px 12px;border-right:2px solid var(--line)}
+th.c1,th.c2{z-index:4;background:var(--head)}th.c2{text-align:left;padding-left:12px}
+tr.sec td{background:var(--hover);font-weight:700;text-align:left;padding:8px 12px;color:var(--pri);letter-spacing:.4px}
+tr.sec td.c1{background:var(--hover)}
+tr.row:hover td{background:var(--hover)}
+.std{display:block;font-size:11.5px;color:var(--mute)}
+th.today{background:var(--pri)}td.today{background:color-mix(in srgb,var(--pri) 8%,transparent)}
+th.we{color:#fca5a5}
+.s{width:34px;height:30px;border-radius:7px;border:1px solid var(--line);background:transparent;cursor:pointer;font-size:11px;font-weight:700;color:var(--text)}
+.s:hover{border-color:var(--pri)}
+.s.OK{background:var(--okbg);color:var(--ok);border-color:transparent}.s.NG{background:var(--ngbg);color:var(--ng);border-color:transparent}
+.note{font-size:12px;color:var(--mute);margin-top:10px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--mute)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.l1::before{background:var(--ok)}.l2::before{background:var(--ng)}
+.pills{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pill{padding:5px 11px;border-radius:99px;font-weight:700;font-size:12px}
+.pill.o{background:var(--ngbg);color:var(--ng)}.pill.g{background:var(--warn)}.pill.c{background:var(--okbg);color:var(--ok)}
+#followTable{min-width:1100px}#followTable th{padding:10px 8px}#followTable td{vertical-align:top;padding:8px}
+#followTable input,#followTable select,#followTable textarea{width:100%}#followTable textarea{min-height:56px;resize:vertical}
+.empty{padding:40px;text-align:center;color:var(--mute)}
+.chart{padding:10px;overflow-x:auto}.chart svg{width:100%;min-width:640px;height:auto;display:block}
+.ins{background:var(--warn);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-weight:600}
+.vf{color:var(--ng);font-weight:700}.tm{color:var(--mute)}
+.pt{text-align:left}.pt th{background:var(--head)}.pt td{padding:8px 12px;text-align:left}
+@media(max-width:800px){.kpis{grid-template-columns:repeat(2,1fr)}.app{padding:10px}header h1{font-size:19px}.c2{min-width:200px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+<div><h1>HOT DIP · Maintenance Checklist</h1><p>Checklist harian, follow up temuan &amp; downtime</p></div>
+<div id="clock" style="font-weight:600"></div>
+</header>
+
+<div class="tabs">
+<button class="tab active" data-t="check">✓ Checklist Harian</button>
+<button class="tab" data-t="follow">⚙ Follow Up &amp; Downtime</button>
+<button class="tab" data-t="pareto">📊 Pareto Kerusakan</button>
+</div>
+
+<section id="check" class="panel active">
+<div class="card bar">
+<div class="f"><label>MESIN / LINE</label><input id="machine" placeholder="Hot Dip Line 1"></div>
+<div class="f"><label>PERIODE</label><input id="period" type="month"></div>
+<div class="f"><label>PIC</label><input id="pic" placeholder="Nama PIC"></div>
+<div class="sp">
+<button class="btn" id="fillToday">Semua OK hari ini</button>
+<button class="btn" id="expCheck">Export CSV</button>
+<button class="btn d" id="resetBtn">Reset periode</button>
+</div>
+</div>
+<div class="kpis">
+<div class="kpi"><small>Total Check</small><b id="total">0</b></div>
+<div class="kpi ok"><small>OK</small><b id="ok">0</b></div>
+<div class="kpi ng"><small>NG</small><b id="ng">0</b></div>
+<div class="kpi"><small>Compliance</small><b id="comp">0%</b><div class="prog"><i id="bar"></i></div></div>
+</div>
+<div class="wrap"><table id="ct"><thead></thead><tbody></tbody></table></div>
+<div class="legend"><span class="l1">OK = normal</span><span class="l2">NG = perlu tindak lanjut</span></div>
+<div class="note">Klik kotak untuk mengganti status (kosong → OK → NG). Data tersimpan otomatis di browser ini. Temuan NG dicatat di tab Follow Up &amp; Downtime.</div>
+</section>
+
+<section id="follow" class="panel">
+<div class="card bar">
+<div><b>FOLLOW UP &amp; DOWNTIME</b><div class="note" style="margin:0">Catat semua temuan NG dari checklist.</div></div>
+<div class="pills" id="summary"></div>
+<div class="sp"><button class="btn p" id="addF">+ Tambah Temuan</button><button class="btn" id="expF">Export CSV</button></div>
+</div>
+<div class="wrap"><table id="followTable"><thead><tr><th>Tanggal</th><th>Item / Komponen</th><th>Temuan</th><th>Tindakan Perbaikan</th><th>PIC</th><th>Status</th><th>Downtime (jam)</th><th>Keterangan</th><th></th></tr></thead><tbody></tbody></table></div>
+</section>
+
+<section id="pareto" class="panel">
+<div class="card bar">
+<div class="f"><label>DATA YANG DIJUMLAHKAN</label><select id="pMetric">
+<option value="ng">Frekuensi NG (checklist)</option>
+<option value="fu">Jumlah temuan (follow up)</option>
+<option value="down">Downtime jam (follow up)</option></select></div>
+<div class="f"><label>DARI BULAN</label><input id="pFrom" type="month"></div>
+<div class="f"><label>SAMPAI BULAN</label><input id="pTo" type="month"></div>
+<div class="sp"><button class="btn" id="pAll">Semua periode</button></div>
+</div>
+<div id="pIns"></div>
+<div class="wrap chart" id="pChart"></div>
+<div class="wrap" style="margin-top:14px"><table class="pt" id="pTable"><thead><tr><th>#</th><th>Komponen</th><th>Nilai</th><th>%</th><th>% Kumulatif</th><th>Kategori</th></tr></thead><tbody></tbody></table></div>
+<div class="note">Pareto menjumlahkan data semua bulan dalam rentang yang dipilih. Komponen “Vital few” (merah) menyumbang sekitar 80% masalah, jadi jadi prioritas perbaikan. Untuk sumber follow up, isi kolom Item dengan nama komponen (pilih dari saran) supaya terjumlah benar.</div>
+</section>
+<datalist id="comps"></datalist>
+</div>
+
+<script>
+const GROUPS=[{t:"MESIN DIPPING HOT DIP",items:[
+["Heater","Berfungsi & tidak pecah"],["Suhu panel","Terbaca"],["Ampere meter","40–60 A"],["Voltmeter","200–250 Volt"],
+["Tekanan hidrolis pada dryer","0,6–0,8 MPa"],["Vanbelt","Kekencangan cukup"],["Roda dryer (grease)","Tidak kering"],
+["Bak dipping","Tidak bocor"],["Bak quenching","Tidak bocor"],["Tekanan hidrolis bak quenching",""],
+["Selang hidrolis bak","Tidak bocor"],["Grease pada bearing bak","Tidak kering"],["Panel: switch / tombol",""],
+["Thermocouple bak galvanis","Bersih & terlindungi"]]}];
+const KEY='hotdip_web_v2';
+let data={check:{},follow:[],machine:'',period:'',pic:''};
+function load(){try{const r=localStorage.getItem(KEY)||localStorage.getItem('hotdip_web_v1');if(r){const o=JSON.parse(r);data=Object.assign(data,o);data.check=o.check||{};data.follow=o.follow||[];Object.keys(data.check).forEach(k=>{if(data.check[k]==='N/A')delete data.check[k]})}}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}}
+load();
+const $=id=>document.getElementById(id);
+const nowP=()=>new Date().toISOString().slice(0,7);
+const P=()=>$('period').value||nowP();
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const ST=['','OK','NG'];
+function dim(p){const[y,m]=p.split('-').map(Number);return new Date(y,m,0).getDate()}
+function flat(){let a=[];GROUPS.forEach(g=>g.items.forEach(x=>a.push(x)));return a}
+
+function renderCheck(){
+ const p=P(),n=dim(p),[y,m]=p.split('-').map(Number),today=new Date(),isCur=today.getFullYear()===y&&today.getMonth()+1===m,td=today.getDate();
+ let h='<tr><th class="c1">No</th><th class="c2">Item pengecekan</th>';
+ for(let d=1;d<=n;d++){const w=new Date(y,m-1,d).getDay();h+=`<th class="${isCur&&d===td?'today':''} ${w===0?'we':''}">${d}</th>`}
+ $('ct').tHead.innerHTML=h+'</tr>';
+ let b='',idx=0;
+ GROUPS.forEach(g=>{b+=`<tr class="sec"><td class="c1"></td><td class="c2" colspan="1" style="border-right:0">${esc(g.t)}</td><td colspan="${n}"></td></tr>`;
+  g.items.forEach(it=>{const i=idx++;
+   b+=`<tr class="row"><td class="c1">${i+1}</td><td class="c2"><b>${esc(it[0])}</b>${it[1]?`<span class="std">${esc(it[1])}</span>`:''}</td>`;
+   for(let d=1;d<=n;d++){const v=data.check[`${p}_${i}_${d}`]||'';b+=`<td class="${isCur&&d===td?'today':''}"><button class="s ${v.replace('/','')}" data-i="${i}" data-d="${d}">${v}</button></td>`}
+   b+='</tr>'})});
+ $('ct').tBodies[0].innerHTML=b;kpi();
+}
+function kpi(){
+ const p=P()+'_';let ok=0,ng=0;
+ for(const k in data.check){if(!k.startsWith(p))continue;const v=data.check[k];if(v==='OK')ok++;else if(v==='NG')ng++}
+ const t=ok+ng,c=t?ok/t*100:0;
+ $('total').textContent=t;$('ok').textContent=ok;$('ng').textContent=ng;$('comp').textContent=c.toFixed(1)+'%';$('bar').style.width=c+'%';
+}
+$('ct').addEventListener('click',e=>{
+ const b=e.target.closest('.s');if(!b)return;
+ const k=`${P()}_${b.dataset.i}_${b.dataset.d}`,cur=data.check[k]||'',nx=ST[(ST.indexOf(cur)+1)%4];
+ if(nx)data.check[k]=nx;else delete data.check[k];
+ b.textContent=nx;b.className='s '+nx.replace('/','');save();kpi();
+});
+$('fillToday').onclick=()=>{
+ const p=P(),t=new Date();if(p!==t.toISOString().slice(0,7)){alert('Pilih periode bulan ini terlebih dahulu.');return}
+ flat().forEach((_,i)=>{const k=`${p}_${i}_${t.getDate()}`;if(!data.check[k])data.check[k]='OK'});save();renderCheck();
+};
+const RESET_ADMIN_CODE='17081945';
+function authorizeReset(){
+ const entered=prompt('Masukkan kode admin untuk mereset periode:');
+ return entered!==null&&entered.trim()===RESET_ADMIN_CODE;
+}
+$('resetBtn').onclick=()=>{if(!authorizeReset())return;if(confirm('Reset semua status checklist untuk periode ini?')){const p=P()+'_';Object.keys(data.check).forEach(k=>{if(k.startsWith(p))delete data.check[k]});save();renderCheck()}};
+['machine','pic'].forEach(id=>$(id).addEventListener('input',()=>{data[id]=$(id).value;save()}));
+$('period').addEventListener('change',()=>{data.period=$('period').value;save();renderCheck()});
+
+function renderFollow(){
+ const tb=$('followTable').tBodies[0];
+ tb.innerHTML=data.follow.length?data.follow.map((x,i)=>`<tr>
+<td><input type="date" value="${esc(x.date)}" data-i="${i}" data-k="date"></td>
+<td><input list="comps" value="${esc(x.item)}" data-i="${i}" data-k="item"></td>
+<td><textarea data-i="${i}" data-k="finding">${esc(x.finding)}</textarea></td>
+<td><textarea data-i="${i}" data-k="action">${esc(x.action)}</textarea></td>
+<td><input value="${esc(x.pic)}" data-i="${i}" data-k="pic"></td>
+<td><select data-i="${i}" data-k="status">${['OPEN','ON PROGRESS','CLOSED'].map(s=>`<option ${x.status===s?'selected':''}>${s}</option>`).join('')}</select></td>
+<td><input type="number" min="0" step=".01" value="${esc(x.down)}" data-i="${i}" data-k="down"></td>
+<td><textarea data-i="${i}" data-k="note">${esc(x.note)}</textarea></td>
+<td><button class="btn d" data-del="${i}">Hapus</button></td></tr>`).join(''):'<tr><td colspan="9" class="empty">Belum ada temuan. Klik “+ Tambah Temuan”.</td></tr>';
+ sum();
+}
+function sum(){
+ const c=s=>data.follow.filter(x=>x.status===s).length,dn=data.follow.reduce((a,x)=>a+(parseFloat(x.down)||0),0);
+ $('summary').innerHTML=`<span class="pill o">OPEN ${c('OPEN')}</span><span class="pill g">PROGRESS ${c('ON PROGRESS')}</span><span class="pill c">CLOSED ${c('CLOSED')}</span><b>Downtime ${dn.toFixed(2)} jam</b>`;
+}
+$('addF').onclick=()=>{data.follow.push({date:new Date().toISOString().slice(0,10),item:'',finding:'',action:'',pic:'',status:'OPEN',down:'',note:''});save();renderFollow()};
+$('followTable').addEventListener('change',e=>{const t=e.target,i=t.dataset.i;if(i==null)return;data.follow[i][t.dataset.k]=t.value;save();sum()});
+$('followTable').addEventListener('click',e=>{const i=e.target.dataset.del;if(i!=null&&confirm('Hapus temuan ini?')){data.follow.splice(i,1);save();renderFollow()}});
+
+const csv=r=>'\ufeff'+r.map(a=>a.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+function dl(n,t){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/csv;charset=utf-8'}));a.download=n;a.click()}
+$('expF').onclick=()=>dl('follow_up_downtime.csv',csv([['Tanggal','Item','Temuan','Tindakan','PIC','Status','Downtime','Keterangan'],...data.follow.map(x=>[x.date,x.item,x.finding,x.action,x.pic,x.status,x.down,x.note])]));
+$('expCheck').onclick=()=>{const p=P(),n=dim(p),ds=Array.from({length:n},(_,i)=>i+1);
+ dl(`checklist_hot_dip_${p}.csv`,csv([['No','Item','Standar',...ds],...flat().map((it,i)=>[i+1,it[0],it[1],...ds.map(d=>data.check[`${p}_${i}_${d}`]||'')])]))};
+
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.t).classList.add('active');
+ if(b.dataset.t==='follow')renderFollow();if(b.dataset.t==='pareto')renderPareto();
+});
+function renderPareto(){
+ const m=$('pMetric').value,f=$('pFrom').value,t=$('pTo').value,names=flat().map(x=>x[0]);
+ const inR=q=>(!f||q>=f)&&(!t||q<=t),agg={};
+ if(m==='ng'){for(const k in data.check){if(data.check[k]!=='NG')continue;const a=k.split('_');if(inR(a[0])&&names[a[1]])agg[names[a[1]]]=(agg[names[a[1]]]||0)+1}}
+ else data.follow.forEach(x=>{if(!inR((x.date||'').slice(0,7)))return;const r=String(x.item||'').trim(),l=names.find(n=>n.toLowerCase()===r.toLowerCase())||r||'(tanpa item)';agg[l]=(agg[l]||0)+(m==='down'?(parseFloat(x.down)||0):1)});
+ const rows=Object.entries(agg).filter(e=>e[1]>0).sort((a,b)=>b[1]-a[1]),tot=rows.reduce((a,r)=>a+r[1],0),fm=v=>m==='down'?v.toFixed(2):v;
+ const tb=$('pTable').tBodies[0];
+ if(!rows.length){$('pIns').innerHTML='';$('pChart').innerHTML='<div class="empty">Belum ada data pada rentang ini. Tandai NG di checklist atau catat temuan di Follow Up.</div>';tb.innerHTML='';return}
+ let cum=0,vf=[];
+ const body=rows.map((r,i)=>{const prev=cum;cum+=r[1];const v=prev<tot*0.8;if(v)vf.push(r[0]);
+  r.push(cum);r.push(v);
+  return `<tr><td>${i+1}</td><td><b>${esc(r[0])}</b></td><td>${fm(r[1])}</td><td>${(r[1]/tot*100).toFixed(1)}%</td><td>${(cum/tot*100).toFixed(1)}%</td><td class="${v?'vf':'tm'}">${v?'Vital few':'Trivial many'}</td></tr>`}).join('');
+ tb.innerHTML=body;
+ $('pIns').innerHTML=`<div class="ins">⚠ ${vf.length} komponen paling sering bermasalah: ${esc(vf.join(', '))} (± 80% dari total ${fm(tot)}${m==='down'?' jam':''}).</div>`;
+ const W=900,H=420,L=56,R=56,T=20,B=130,pw=W-L-R,ph=H-T-B,bw=pw/rows.length,Y=v=>T+ph-v/tot*ph;
+ let g='';
+ for(let i=0;i<=5;i++){const y=T+ph-ph*i/5;g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" style="stroke:var(--line)"/><text x="${L-8}" y="${y+4}" text-anchor="end" font-size="11" style="fill:var(--mute)">${fm(+(tot*i/5).toFixed(2))}</text><text x="${W-R+8}" y="${y+4}" font-size="11" style="fill:var(--mute)">${i*20}%</text>`}
+ g+=`<line x1="${L}" x2="${W-R}" y1="${Y(tot*.8)}" y2="${Y(tot*.8)}" stroke-dasharray="5 4" style="stroke:var(--ng)"/>`;
+ let pts=[];
+ rows.forEach((r,i)=>{const x=L+i*bw,h=r[1]/tot*ph,cx=x+bw/2,lb=r[0].length>24?r[0].slice(0,23)+'…':r[0];
+  g+=`<rect x="${x+bw*.12}" y="${T+ph-h}" width="${bw*.76}" height="${h}" rx="3" style="fill:${r[3]?'var(--ng)':'var(--pri)'};opacity:${r[3]?1:.55}"><title>${esc(r[0])}: ${fm(r[1])}</title></rect>`;
+  g+=`<text x="${cx}" y="${T+ph-h-5}" text-anchor="middle" font-size="11" font-weight="700" style="fill:var(--text)">${fm(r[1])}</text>`;
+  g+=`<text transform="translate(${cx},${T+ph+14}) rotate(-35)" text-anchor="end" font-size="11" style="fill:var(--text)">${esc(lb)}</text>`;
+  pts.push([cx,Y(r[2])])});
+ g+=`<polyline fill="none" stroke-width="2.5" points="${pts.map(p=>p.join(',')).join(' ')}" style="stroke:#f59e0b"/>`+pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="4" style="fill:#f59e0b"/>`).join('');
+ $('pChart').innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Diagram Pareto">${g}</svg>`;
+}
+['pMetric','pFrom','pTo'].forEach(id=>$(id).addEventListener('change',renderPareto));
+$('pAll').onclick=()=>{$('pFrom').value='';$('pTo').value='';renderPareto()};
+$('comps').innerHTML=flat().map(x=>`<option value="${esc(x[0])}">`).join('');
+function clock(){$('clock').textContent=new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
+$('machine').value=data.machine;$('pic').value=data.pic;$('period').value=data.period||nowP();
+clock();renderCheck();renderFollow();
+</script>
+</body>
+</html>
